@@ -1,0 +1,122 @@
+/* Module Equipe — assistant et écran de contrôle. Tout est préfixé par #eq.
+ *
+ * Couleurs : uniquement les variables d'Ianseo (Common/Styles/colors.css), que le module THEME redéfinit pour chaque
+ * palette et pour le mode sombre — aucune couleur fixe ici. Les couleurs d'état (vert, orange, rouge) partent de
+ * --text-success / --text-warning / --text-danger, mêlées à --black (le texte : noir en clair, clair en sombre) pour
+ * le texte et à --row-background pour les fonds : lisibles dans les deux modes.
+ */
+#eq {
+    --bleu: var(--main-text);                 /* titres, texte d'accent */
+    --plein: var(--header-dark);              /* fonds pleins : boutons, étape en cours, sélection */
+    --sur-plein: var(--row-main-text);        /* texte sur --plein */
+    --lien: var(--thm-link, var(--header-dark));
+    --bleu-clair: var(--table-background);
+    --bord: var(--input-border);
+    --gris: var(--text-muted);
+    --texte: var(--text-dark);
+    --fond: var(--row-background);
+    --neutre: var(--header-light);
+    --champ: var(--text-white);
+    --champ-texte: var(--black);
+    --rouge: color-mix(in srgb, var(--text-danger) 70%, var(--black));
+    --rouge-fond: color-mix(in srgb, var(--text-danger) 14%, var(--row-background));
+    --orange: color-mix(in srgb, var(--text-warning) 50%, var(--black));
+    --orange-fond: color-mix(in srgb, var(--text-warning) 16%, var(--row-background));
+    --vert: color-mix(in srgb, var(--text-success) 60%, var(--black));
+    --vert-fond: color-mix(in srgb, var(--text-success) 14%, var(--row-background));
+    max-width: 1400px; margin: 0 auto; padding: 8px 12px 40px; font-size: 13px; color: var(--texte);
+}
+#eq h2 { color: var(--bleu); margin: 4px 0; font-size: 20px; }
+#eq h3 { color: var(--bleu); margin: 18px 0 8px; font-size: 15px; }
+#eq a { color: var(--lien); }
+#eq .eq-head { background: var(--fond); border: 1px solid var(--bord); border-radius: 8px; padding: 6px 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+#eq .eq-head nav a { margin-left: 4px; padding: 5px 12px; border-radius: 6px; text-decoration: none; color: var(--lien); border: 1px solid var(--plein); }
+#eq .eq-head nav a.cur { background: var(--plein); color: var(--sur-plein); }
+#eq .eq-muted { color: var(--gris); }
+#eq .eq-banner { border-radius: 6px; padding: 8px 12px; margin: 8px 0; border-left: 5px solid; color: var(--texte); }
+#eq .eq-banner ul { margin: 4px 0 4px 18px; padding: 0; }
+#eq .eq-red { background: var(--rouge-fond); border-color: var(--rouge); }
+#eq .eq-orange { background: var(--orange-fond); border-color: var(--orange); }
+#eq .eq-green { background: var(--vert-fond); border-color: var(--vert); }
+#eq .eq-info { background: var(--bleu-clair); border-color: var(--plein); }
+
+/* Étapes */
+#eq .eq-steps { display: flex; gap: 4px; margin: 10px 0 14px; flex-wrap: wrap; }
+#eq .eq-steps span { padding: 6px 12px; border-radius: 16px; background: var(--neutre); color: var(--gris); font-weight: 600; }
+#eq .eq-steps span.cur { background: var(--plein); color: var(--sur-plein); }
+#eq .eq-steps span.done { background: var(--bleu-clair); color: var(--bleu); }
+#eq .eq-card { background: var(--fond); border: 1px solid var(--bord); border-radius: 8px; padding: 12px 14px; margin-bottom: 12px; color: var(--texte); }
+#eq .eq-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+#eq .eq-actions .eq-grow { flex: 1; }
+
+/* Boutons et champs */
+#eq button { font: inherit; border-radius: 6px; padding: 6px 14px; cursor: pointer; border: 1px solid var(--plein); background: var(--plein); color: var(--sur-plein); font-weight: 600; }
+#eq button.ghost { background: var(--fond); color: var(--lien); }
+#eq button.danger { background: var(--rouge); border-color: var(--rouge); color: var(--champ); }
+#eq button.small { padding: 2px 8px; font-size: 12px; }
+#eq button:disabled { opacity: .45; cursor: not-allowed; }
+#eq input[type=text], #eq input[type=number], #eq input[type=search], #eq select { font: inherit; padding: 4px 6px; border: 1px solid var(--bord); border-radius: 4px; background: var(--champ); color: var(--champ-texte); }
+#eq input[type=number] { width: 60px; }
+#eq label.eq-check { display: inline-flex; align-items: center; gap: 4px; margin: 2px 10px 2px 0; white-space: nowrap; cursor: pointer; }
+#eq .eq-form { display: grid; grid-template-columns: max-content 1fr; gap: 8px 12px; align-items: center; }
+#eq .eq-form > label { font-weight: 600; }
+
+/* Tableaux */
+#eq table.eq-table { border-collapse: collapse; width: 100%; background: var(--fond); }
+#eq table.eq-table th, #eq table.eq-table td { border: 1px solid var(--bord); padding: 4px 8px; text-align: left; vertical-align: top; color: var(--texte); }
+#eq table.eq-table th { background: var(--bleu-clair); }
+#eq table.eq-table td.num { text-align: right; }
+#eq .eq-old { color: var(--gris); text-decoration: line-through; }
+#eq .eq-new { color: var(--bleu); font-weight: 700; }
+
+/* Badges */
+#eq .b { display: inline-block; border-radius: 9px; padding: 0 6px; font-size: 11px; font-weight: 600; margin-left: 3px; background: var(--neutre); color: var(--texte); }
+#eq .b.st-BEFORE { background: var(--vert-fond); color: var(--vert); }
+#eq .b.st-STARTED, #eq .b.st-SO_DONE { background: var(--orange-fond); color: var(--orange); }
+#eq .b.st-FINALS, #eq .b.st-LOCKED, #eq .b.red { background: var(--rouge-fond); color: var(--rouge); }
+#eq .b.orange { background: var(--orange-fond); color: var(--orange); }
+#eq .b.blue { background: var(--bleu-clair); color: var(--bleu); }
+
+/* Composition */
+#eq .eq-tools { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+#eq .eq-cat { background: var(--fond); border: 1px solid var(--bord); border-radius: 8px; padding: 4px 12px 10px; margin-bottom: 12px; }
+#eq .eq-teams { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; align-content: start; }
+#eq .eq-steps span.mode { background: none; color: var(--gris); font-weight: 400; }
+#eq .eq-club { display: grid; grid-template-columns: 170px 2fr 1fr; gap: 10px; padding: 8px 0; border-top: 1px solid var(--bleu-clair); }
+#eq .eq-club-name b { color: var(--bleu); }
+#eq .eq-box { border: 2px dashed var(--bord); border-radius: 8px; padding: 6px; min-height: 44px; background: var(--neutre); }
+#eq .eq-box.team { border-style: solid; background: var(--fond); }
+#eq .eq-box.team.bad { border-color: var(--orange); }
+#eq .eq-box.team.ok { border-color: var(--vert); }
+#eq .eq-box.over { background: var(--bleu-clair); border-color: var(--plein); }
+#eq .eq-box.target { outline: 2px solid var(--plein); outline-offset: 1px; cursor: pointer; }
+#eq .eq-box > .t { display: flex; gap: 4px; align-items: center; font-weight: 700; color: var(--bleu); margin-bottom: 4px; }
+#eq .eq-box .w { color: var(--orange); font-size: 11px; margin-top: 4px; }
+#eq .chip { display: inline-block; border: 1px solid var(--bord); border-radius: 6px; padding: 3px 7px; margin: 2px; background: var(--fond); color: var(--texte); cursor: grab; user-select: none; }
+#eq .chip .sc { color: var(--bleu); margin-left: 4px; }
+#eq .chip.sel { background: var(--plein); color: var(--sur-plein); border-color: var(--plein); }
+#eq .chip.sel .sc { color: var(--sur-plein); }
+#eq .chip.sel .b { background: var(--fond); }
+#eq .chip.drag { opacity: .4; }
+#eq .b.ok { background: var(--vert-fond); color: var(--vert); }
+#eq a.eq-btn { display: inline-block; border-radius: 6px; padding: 6px 14px; border: 1px solid var(--plein); background: var(--plein); color: var(--sur-plein); font-weight: 600; text-decoration: none; }
+#eq a.eq-btn.ghost { background: var(--fond); color: var(--lien); }
+#eq .eq-done { border-left: 5px solid var(--vert); background: var(--vert-fond); }
+#eq details.eq-card summary { cursor: pointer; font-weight: 600; color: var(--bleu); }
+#eq details.eq-card table { margin-top: 8px; }
+
+@media (max-width: 760px) {
+    #eq .eq-club { grid-template-columns: 1fr; }
+    #eq .eq-form { grid-template-columns: 1fr; }
+}
+@media print {
+    #eq .eq-head nav, #eq .eq-actions, #eq .eq-tools { display: none; }
+}
+
+/* Page des équipes créées */
+#eq .eq-rank td.r { width: 50px; text-align: center; font-weight: 700; }
+#eq .eq-rank td.s { width: 80px; text-align: right; font-weight: 700; }
+#eq .eq-rank td.d { width: 90px; text-align: center; }
+#eq button.danger-ghost { background: var(--fond); color: var(--rouge); border-color: var(--rouge); }
+#eq button.danger-ghost:hover:not(:disabled) { background: var(--rouge-fond); }
+#eq tr.eq-bad td { background: var(--orange-fond); }
