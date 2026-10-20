@@ -1,5 +1,12 @@
 # Nouveautés de chaque version
 
+## 0.4.1 — version de test
+
+- **Mise à jour du module sous Windows.** La mise à jour depuis IANSEO s'arrêtait sur « Écriture impossible :
+  admin/update.php » : Windows refuse de remplacer la page en cours d'affichage. Le module écrit maintenant
+  directement dans ce fichier. Pour passer à cette version depuis une version précédente sous Windows, une seule
+  fois : décompresser le ZIP de la Release dans `Modules/Custom` en écrasant les fichiers.
+
 ## 0.4.0 — version de test
 
 - **Première version publique**, sur https://github.com/CorentinA1/EquipeModuleIanseo (ZIP dans les Releases).
