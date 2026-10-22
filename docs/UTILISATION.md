@@ -5,7 +5,8 @@ Menu **Modules → Équipes** (compétition au règlement FR), trois pages avec 
 - **Composer des équipes** : l'assistant, en 4 étapes ;
 - **Contrôles et historique** : archers inscrits plusieurs fois, journal, garde-fou.
 
-Les trois pages ont les mêmes onglets en haut, et un lien **Mode d'emploi** vers cette page.
+Les trois pages ont les mêmes onglets en haut, et un lien **Mode d'emploi** qui ouvre le
+[guide utilisateur illustré (PDF)](GUIDE-UTILISATEUR.pdf), livré avec le module.
 
 > **Sauvegardez la compétition** (Compétition › Exports › Export de la compétition) avant d'appliquer une
 > composition le jour de la compétition. Voir [À lire avant d'utiliser le module](AVERTISSEMENT.md).

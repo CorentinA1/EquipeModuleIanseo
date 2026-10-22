@@ -1,5 +1,11 @@
 # Nouveautés de chaque version
 
+## 0.5.1 — version de test
+
+- **Guide utilisateur illustré (PDF)** dans `docs/GUIDE-UTILISATEUR.pdf` : le module en bref, le tableau de bord,
+  l'assistant étape par étape, modifier, supprimer et annuler, les contrôles, questions fréquentes ; captures sur une
+  compétition fictive. Le lien **Mode d'emploi** des onglets l'ouvre directement (il ouvrait la page GitHub).
+
 ## 0.5.0 — version de test
 
 **Nouvelle organisation des pages.** L'assistant mêlait des impressions, des contrôles, le journal et l'annulation ;

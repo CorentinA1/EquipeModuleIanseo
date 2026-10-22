@@ -53,7 +53,8 @@ function Equipe_page_header($cur)
     foreach ($tabs as $k => [$href, $label]) {
         $html .= '<a href="' . $href . '"' . ($k === $cur ? ' class="cur" aria-current="page"' : '') . '>' . $label . '</a>';
     }
-    $html .= '<a class="eq-help" href="' . EQUIPE_DOC . 'UTILISATION.md" target="_blank" rel="noopener">Mode d\'emploi</a></nav></div>';
+    // Guide utilisateur en PDF, livré avec le module (docs/), donc lisible sans accès à GitHub.
+    $html .= '<a class="eq-help" href="./docs/GUIDE-UTILISATEUR.pdf" target="_blank" rel="noopener">Mode d\'emploi</a></nav></div>';
     return $html . Equipe_guard_banner($GUARD);
 }
 

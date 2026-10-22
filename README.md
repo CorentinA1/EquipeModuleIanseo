@@ -1,6 +1,6 @@
 # Équipes — assistant de composition des équipes pour IANSEO
 
-**Version 0.5.0** (en test)
+**Version 0.5.1** (en test)
 
 Module IANSEO qui aide le greffe à composer les **équipes de club** d'une compétition FFTA simple (sans épreuve par
 équipes), puis à éditer leur classement :
@@ -28,6 +28,7 @@ Ensuite, les mises à jour se font depuis IANSEO : **Modules → Équipes → Mi
 
 ## Documentation
 
+- **[Guide utilisateur (PDF)](docs/GUIDE-UTILISATEUR.pdf)** : le mode d'emploi illustré, à lire ou à imprimer ; aussi dans le module, lien « Mode d'emploi »
 - [À lire avant d'utiliser le module](docs/AVERTISSEMENT.md) : module indépendant, sauvegardes, licences
 - [Installation, mise à jour et désinstallation](docs/INSTALLATION.md)
 - [Utilisation](docs/UTILISATION.md) : les deux modes, l'assistant, la page des équipes
