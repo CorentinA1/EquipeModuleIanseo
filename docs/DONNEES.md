@@ -86,8 +86,8 @@ son **premier départ** : date de début du départ dans IANSEO quand tous ses d
 (à égalité, la première inscription). Ses autres inscriptions doivent avoir **toutes leurs cases équipe à non** :
 « Équipe » (classement division/classe), « Épreuves par équipes » et « Équipes mixtes ».
 
-**Contrôle** (lecture seule, toute la compétition) : l'assistant (étape 1) liste ces archers, leurs départs et leurs
-trois cases équipe, et signale les inscriptions en défaut ; la page Équipes créées affiche aussi un bandeau.
+**Contrôle** (lecture seule, toute la compétition) : la page Contrôles et historique liste ces archers, leurs départs
+et leurs trois cases équipe, et signale les inscriptions en défaut ; le tableau de bord affiche aussi un bandeau.
 **Correction** : en mode classe et division, le module **décoche** la case « Équipe » de ces inscriptions dans les
 catégories traitées, sinon IANSEO les compterait. Les cases « Épreuves par équipes » et « Équipes mixtes » servent aux
 finales : le module n'y touche pas, elles se décochent dans IANSEO › Participants.

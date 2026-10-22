@@ -1,6 +1,6 @@
 # Équipes — assistant de composition des équipes pour IANSEO
 
-**Version 0.4.1** (en test)
+**Version 0.5.0** (en test)
 
 Module IANSEO qui aide le greffe à composer les **équipes de club** d'une compétition FFTA simple (sans épreuve par
 équipes), puis à éditer leur classement :
@@ -10,8 +10,9 @@ Module IANSEO qui aide le greffe à composer les **équipes de club** d'une comp
 - **libre** : des équipes qui mêlent les classes d'une même arme tirant à la même distance sur le même blason
   (ex. S1H et U21H en arc classique à 70 m), classées par le module.
 
-L'assistant liste les archers, **propose** les équipes, on les ajuste à la souris ou au doigt, on vérifie l'aperçu,
-puis on applique. La page « Équipes créées » montre le résultat et ouvre le classement.
+Trois pages : le **tableau de bord** montre les équipes et ouvre les classements ; **Composer des équipes** est un
+assistant en 4 étapes (mode, catégories, composition, vérifier et appliquer) qui **propose** les équipes, qu'on ajuste
+à la souris ou au doigt ; **Contrôles et historique** regroupe les vérifications et le journal.
 
 > **Module indépendant, sans garantie ni SAV.** Il n'est pas développé par l'équipe IANSEO (ianseo.net) ni par la
 > FFTA, et peut contenir des bugs. **Sauvegardez la compétition** avant de commencer et après chaque application
@@ -21,7 +22,7 @@ puis on applique. La page « Équipes créées » montre le résultat et ouvre l
 
 1. Télécharger `EQUIPE-vX.Y.Z.zip` dans les **Releases** du dépôt.
 2. Le décompresser dans `Modules/Custom/` d'IANSEO : le dossier doit s'appeler `EQUIPE`.
-3. Ouvrir une compétition au règlement FR : **Modules → Équipes → Assistant de composition**.
+3. Ouvrir une compétition au règlement FR : **Modules → Équipes → Tableau de bord**.
 
 Ensuite, les mises à jour se font depuis IANSEO : **Modules → Équipes → Mise à jour du module** (administrateur).
 

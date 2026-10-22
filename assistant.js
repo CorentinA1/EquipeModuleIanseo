@@ -1,9 +1,11 @@
 /**
- * index.js — assistant du module Equipe.
+ * assistant.js — « Composer des équipes » : Mode, Catégories, Composition, Vérifier et appliquer, puis écran de fin.
  *
  * État dans S, rendu complet de l'étape à chaque changement, actions par
  * délégation (attribut data-act). Le serveur (action.php) refait tous les
- * contrôles : ce fichier ne fait que préparer et afficher.
+ * contrôles : ce fichier ne fait que préparer et afficher. Impressions,
+ * annulation, contrôles et journal sont sur le tableau de bord et la page
+ * Contrôles, pas ici.
  *
  * Équipe affichée : { sec (indice de section), club, n (numéro local), members }.
  * Mode classe : une équipe au plus par club et par section ; mode libre : plusieurs.
@@ -14,16 +16,14 @@
     'use strict';
 
     const C = window.EQUIPE;
-    const STEPS = ['Critères', 'Composition', 'Aperçu'];
-    const MODES = {
-        classe: 'Par classe et division — classement par équipes d\'Ianseo',
-        libre: 'Libre — classes mêlées d\'une même arme, même distance et même blason',
-    };
+    const STEPS = ['Mode', 'Catégories', 'Composition', 'Vérifier et appliquer'];
+    const FIN = STEPS.length + 1;   // écran de fin, après l'application
+    const MODES = { classe: 'Par classe et division', libre: 'Libre' };
     const S = {
         init: null, step: 1, msg: null, mode: 'classe',
         crit: { divs: [], classes: [] }, settings: { size_min: 3, size_max: 4 },
         sections: [], teams: [], archers: {}, sel: new Set(), filter: '', nextN: 1,
-        plan: null, confirm: false, busy: false, done: null, log: null,
+        plan: null, confirm: false, busy: false, done: null,
     };
 
     const $app = () => document.getElementById('eq-app');
@@ -53,12 +53,22 @@
     function render() {
         let h = '';
         if (S.msg) h += `<div class="eq-banner eq-${S.msg[0]}">${esc(S.msg[1])}</div>`;
-        h += '<div class="eq-steps">' + STEPS.map((l, i) =>
-            `<span class="${i + 1 === S.step ? 'cur' : (i + 1 < S.step ? 'done' : '')}">${i + 1}. ${esc(l)}</span>`).join('')
-            + (S.step > 1 ? `<span class="mode">${esc(MODES[S.mode])}</span>` : '') + '</div>';
-        h += [null, step1, step2, step3][S.step]();
+        h += '<ol class="eq-steps" aria-label="Étapes">' + STEPS.map((l, i) =>
+            `<li class="${i + 1 === S.step ? 'cur' : (i + 1 < S.step ? 'done' : '')}"${i + 1 === S.step ? ' aria-current="step"' : ''}>${i + 1}. ${esc(l)}</li>`).join('') + '</ol>';
+        if (S.step > 1 && S.step < FIN) h += modeLine();
+        h += [null, step1, step2, step3, step4, stepFin][S.step]();
         $app().innerHTML = h;
-        if (S.step === 2) applyFilter();
+        if (S.step === 3) applyFilter();
+    }
+
+    /** Rappel du mode (et des critères à partir de la composition), avec retour pour les changer. */
+    function modeLine() {
+        let h = `<p class="eq-mode">Mode : <b>${esc(MODES[S.mode])}</b> <button class="eq-link" data-act="to1">changer</button>`;
+        if (S.step > 2) {
+            h += ` · ${esc(S.crit.divs.join(', '))} · ${esc(S.crit.classes.join(', '))} · ${S.settings.size_min} à ${S.settings.size_max} archers
+                <button class="eq-link" data-act="to2">changer</button>`;
+        }
+        return h + '</p>';
     }
 
     function go(step) {
@@ -77,93 +87,64 @@
         return C.print + (q.length ? '?' + q.join('&') : '');
     }
 
-    // ── Étape 1 : mode et critères ───────────────────────────────────────────
+    // ── Étape 1 : mode ───────────────────────────────────────────────────────
+
+    function step1() {
+        const card = (k, title, text, ex, rank) => `<button type="button" class="eq-choice${S.mode === k ? ' cur' : ''}" data-act="pick-mode" data-mode="${k}">
+            <span class="t">${title}</span><span>${text}</span><span class="ex">${ex}</span><span class="eq-muted">${rank}</span>
+            <span class="go">Choisir ce mode</span></button>`;
+        return `<p class="eq-lead">Quel type d'équipes voulez-vous composer ?</p><div class="eq-choices">`
+            + card('classe', 'Par classe et division',
+                'Une équipe = des archers d\'un même club et d\'une même catégorie (division + classe). Le module coche la case « Équipe » des archers retenus.',
+                'Exemple : 3 archers S1H en arc classique, du même club', 'Classement : celui d\'Ianseo (classement par équipes)')
+            + card('libre', 'Libre',
+                'Des archers d\'un même club et d\'une même arme, quelle que soit leur classe, s\'ils tirent à la même distance sur le même blason.',
+                'Exemple : un S1H, un S3H et un U21H en arc classique', 'Classement : fait par le module (Hommes, Femmes, Mixte) ; Ianseo n\'est pas modifié')
+            + `</div><div class="eq-actions"><a class="eq-btn ghost" href="${esc(C.home)}">← Retour au tableau de bord</a></div>`;
+    }
+
+    // ── Étape 2 : catégories ─────────────────────────────────────────────────
 
     const catCount = (div, cls) => S.init.counts[div + cls] || 0;
 
-    /** Archers inscrits plusieurs fois : cases équipe à 0 sauf sur le premier départ. */
-    function dupControl(d) {
-        if (!d || !d.archers.length) return '';
-        const yes = (v) => v ? '<b>oui</b>' : 'non';
-        let h = `<div class="eq-card"><h3>Inscrits plusieurs fois — contrôle des cases équipe</h3>
-            <p class="eq-muted">Pour les équipes, seul compte le <b>premier score</b> de l'archer : son premier départ (date du départ dans
-            Ianseo si elle est saisie, sinon numéro du départ). Sur ses autres inscriptions, toutes les cases équipe doivent être à <b>non</b>.</p>
-            ${d.bad ? `<div class="eq-banner eq-orange"><b>${d.bad} inscription(s) en défaut.</b> Case « Équipe » : passez la catégorie dans
-                l'assistant en mode « classe et division », il la décoche. « Épreuves par équipes » et « Équipes mixtes » : le module n'y
-                touche pas (finales) ; décochez-les dans Ianseo › Participants.</div>`
-                : '<div class="eq-banner eq-green">Toutes les inscriptions qui ne comptent pas ont leurs cases équipe à non.</div>'}
-            <details ${d.bad ? 'open' : ''}><summary>${d.archers.length} archer(s) inscrit(s) plusieurs fois</summary>
-            <table class="eq-table"><tr><th>Archer</th><th>Départ</th><th>Catégorie</th><th>Compte</th><th>Équipe</th><th>Épreuves par équipes</th><th>Équipes mixtes</th></tr>`;
-        for (const a of d.archers) {
-            a.rows.forEach((r, i) => {
-                h += `<tr${r.bad ? ' class="eq-bad"' : ''}>${i ? '' : `<td rowspan="${a.rows.length}">${esc(a.name)}</td>`}
-                    <td>${r.session || '?'}</td><td>${esc(r.cat)}</td><td>${r.kept ? '<span class="b ok">oui</span>' : 'non'}</td>
-                    <td>${yes(r.team)}</td><td>${yes(r.teamf)}</td><td>${yes(r.teammix)}</td></tr>`;
-            });
-        }
-        return h + '</table></details></div>';
-    }
-
-    function step1() {
+    function step2() {
         const I = S.init;
-        let h = '';
-        if (S.done) {
-            h += `<div class="eq-card eq-done"><b>${esc(S.done)}</b>
-                <div class="eq-actions"><a class="eq-btn" href="${esc(C.teams)}">Voir les équipes créées</a>
-                ${S.mode === 'classe' ? `<a class="eq-btn ghost" href="${esc(nativePrintUrl())}" target="_blank">Éditer le classement par équipes (Ianseo)</a>`
-                    : `<a class="eq-btn ghost" href="${esc(C.teamsPdf)}" target="_blank">Classement des équipes libres (PDF)</a>`}</div></div>`;
-        }
-        if (I.undo) {
-            const what = I.undo.mode === 'libre' ? `équipes libres (${I.undo.n} avant l'application)` : `classe et division, ${I.undo.n} archer(s)`;
-            const confirmBox = I.undo.mode !== 'libre' && I.state.started;
-            h += `<div class="eq-card"><b>Dernière application :</b> ${esc(what)}, le ${esc(I.undo.at)} (${esc(I.undo.user)}).
-                <div class="eq-actions">${confirmBox ? `<label class="eq-check"><input type="checkbox" data-field="confirm" ${S.confirm ? 'checked' : ''}> Je confirme (tir commencé)</label>` : ''}
-                <button class="ghost" data-act="undo" ${I.canWrite ? '' : 'disabled'}>Annuler cette application</button></div></div>`;
-        }
-        h += `<div class="eq-card"><h3>Classements</h3><div class="eq-actions" style="margin:0">
-            <a class="eq-btn" href="${esc(C.print)}" target="_blank" title="Classement par équipes d'Ianseo (équipes classe et division)">Classement par équipes (Ianseo)</a>
-            <a class="eq-btn" href="${esc(C.teamsPdf)}" target="_blank" title="Classement des équipes libres, fait par le module">Classement des équipes libres (PDF)</a>
-            <a class="eq-btn ghost" href="${esc(C.teams)}">Voir les équipes créées</a></div></div>`;
-        h += dupControl(I.dups);
         const box = (field, id, label, checked, n) =>
-            `<label class="eq-check"><input type="checkbox" data-field="${field}" value="${esc(id)}" ${checked ? 'checked' : ''}> ${esc(label)}${n !== undefined ? ` <span class="b">${n}</span>` : ''}</label>`;
-        h += `<div class="eq-card"><h3>Mode de composition</h3>
-            ${Object.entries(MODES).map(([k, l]) => `<label class="eq-check" style="display:flex"><input type="radio" name="eqmode" data-field="mode" value="${k}" ${S.mode === k ? 'checked' : ''}> ${esc(l)}</label>`).join('')}
-            <p class="eq-muted">${S.mode === 'classe'
-                ? 'Ianseo forme une équipe par club et par catégorie (division + classe) avec les 3 meilleurs scores des archers cochés « Équipe ». Le module coche ou décoche cette case.'
-                : 'Les archers d\'une même arme qui tirent à la même distance sur le même blason peuvent faire équipe, quelle que soit leur classe (ex. S1H et S3H). Ces équipes sont gardées par le module et classées par lui : le classement natif d\'Ianseo n\'est pas modifié.'}</p></div>`;
-        h += `<div class="eq-card"><h3>Division(s)</h3>
+            `<label class="eq-check${checked ? ' on' : ''}"><input type="checkbox" data-field="${field}" value="${esc(id)}" ${checked ? 'checked' : ''}> ${esc(label)}${n !== undefined ? ` <span class="b">${n}</span>` : ''}</label>`;
+        let h = `<div class="eq-layout"><div class="eq-main">
+            <div class="eq-card"><h3>Armes (divisions)</h3>
             ${I.divisions.map((d) => box('div', d.id, `${d.id} — ${d.name}`, S.crit.divs.includes(d.id),
-                I.classes.reduce((n, c) => n + catCount(d.id, c.id), 0))).join('')}
-            <h3>Classe(s)</h3>
-            <div class="eq-actions" style="margin:0 0 6px"><button class="ghost small" data-act="cls-sex" data-sex="1">Toutes les femmes</button>
+                I.classes.reduce((n, c) => n + catCount(d.id, c.id), 0))).join('')}</div>
+            <div class="eq-card"><h3>Classes</h3>
+            <div class="eq-actions" style="margin:0 0 8px"><button class="ghost small" data-act="cls-sex" data-sex="1">Toutes les femmes</button>
             <button class="ghost small" data-act="cls-sex" data-sex="0">Tous les hommes</button>
             <button class="ghost small" data-act="cls-sex" data-sex="all">Toutes</button>
-            <button class="ghost small" data-act="cls-sex" data-sex="none">Aucune</button>
-            <span class="eq-muted">Le chiffre = archers inscrits dans les divisions cochées.</span></div>`;
+            <button class="ghost small" data-act="cls-sex" data-sex="none">Aucune</button></div>`;
         for (const [sex, label] of [[1, 'Femmes'], [0, 'Hommes'], [-1, 'Autres']]) {
             const list = I.classes.filter((c) => c.sex === sex);
             if (!list.length) continue;
-            h += `<div><b>${label} :</b> ${list.map((c) => box('cls', c.id, c.id, S.crit.classes.includes(c.id),
+            h += `<div class="eq-grp"><b>${label}</b> ${list.map((c) => box('cls', c.id, c.id, S.crit.classes.includes(c.id),
                 S.crit.divs.reduce((n, d) => n + catCount(d, c.id), 0))).join('')}</div>`;
         }
-        h += `<h3>Archers par équipe</h3>
-            de <input type="number" min="3" max="8" data-field="s-min" value="${S.settings.size_min}">
-            à <input type="number" min="3" max="8" data-field="s-max" value="${S.settings.size_max}">
-            <span class="eq-muted">(au-delà de 3 : remplaçants, les 3 meilleurs scores comptent)</span></div>
-            <div class="eq-actions"><a class="eq-btn ghost" href="${esc(C.teams)}">Voir les équipes créées</a><span class="eq-grow"></span>
-            <button data-act="load" ${S.crit.divs.length && S.crit.classes.length ? '' : 'disabled'}>Lister les archers →</button></div>`;
-        h += '<div class="eq-card"><h3>Journal</h3>';
-        if (S.log === null) h += '<button class="ghost small" data-act="log">Afficher le journal</button>';
-        else if (!S.log.length) h += '<p class="eq-muted">Journal vide.</p>';
-        else {
-            h += '<table class="eq-table"><tr><th>Date</th><th>Par</th><th>Action</th><th>Détail</th></tr>'
-                + S.log.map((l) => `<tr><td>${esc(l[0])}</td><td>${esc(l[1])}</td><td>${esc(l[2])}</td><td>${esc(l[3])}</td></tr>`).join('') + '</table>';
-        }
-        return h + '</div>';
+        h += `<p class="eq-muted">Le chiffre : archers inscrits dans les armes cochées.</p></div>
+            <div class="eq-card"><h3>Archers par équipe</h3>
+            de <input type="number" min="3" max="8" data-field="s-min" value="${S.settings.size_min}" aria-label="Minimum">
+            à <input type="number" min="3" max="8" data-field="s-max" value="${S.settings.size_max}" aria-label="Maximum">
+            <span class="eq-muted">Au-delà de 3 : remplaçants. Les 3 meilleurs scores comptent.</span></div></div>`;
+
+        // Votre sélection : archers et catégories retenus par les cases cochées.
+        const cats = [];
+        for (const d of S.crit.divs) for (const c of S.crit.classes) if (catCount(d, c)) cats.push([d + c, catCount(d, c)]);
+        const total = cats.reduce((n, x) => n + x[1], 0);
+        h += `<aside class="eq-card eq-side" aria-label="Votre sélection"><h3>Votre sélection</h3>
+            <div class="eq-big">${total} archer${total > 1 ? 's' : ''}</div>
+            <p class="eq-muted">dans ${cats.length} catégorie${cats.length > 1 ? 's' : ''}</p>
+            ${cats.length ? `<dl>${cats.map(([k, n]) => `<dt>${esc(k)}</dt><dd>${n}</dd>`).join('')}</dl>` : ''}</aside></div>`;
+        return h + `<div class="eq-actions"><button class="ghost" data-act="to1">← Mode</button><span class="eq-grow"></span>
+            <button data-act="load" ${total ? '' : 'disabled'}>Composer les équipes →</button></div>`;
     }
 
-    // ── Étape 2 : composition ────────────────────────────────────────────────
+    // ── Étape 3 : composition ────────────────────────────────────────────────
 
     function teamChecks(members) {
         const n = members.length;
@@ -203,14 +184,18 @@
             ${w.length ? `<div class="w">⚠ ${esc(w.join(' · '))}</div>` : ''}</div>`;
     }
 
-    function step2() {
+    function step3() {
         const ro = readOnly();
         let h = `<div class="eq-card"><div class="eq-tools">
             <button class="ghost" data-act="propose" ${ro ? 'disabled' : ''}>Proposition automatique</button>
             <button class="ghost" data-act="clear" ${ro ? 'disabled' : ''}>Tout retirer</button>
-            <input type="search" data-field="filter" placeholder="Filtrer : archer ou club" value="${esc(S.filter)}">
-            <span class="eq-muted">Glisser-déposer, ou toucher un archer puis une case. <b>Ctrl + clic</b> (Cmd sur Mac) : plusieurs archers du même club, déplacés ensemble (Échap : tout désélectionner). Proposition : ${S.init.state.started ? 'par score' : 'par ordre d\'inscription'}${S.mode === 'libre' ? ', hommes et femmes séparés. Une équipe qui mêle hommes et femmes va dans le classement « Mixte »' : ''}.
-            ${S.mode === 'classe' ? 'Au départ : les archers cochés « Équipe » dans Ianseo (moins de 3 dans le club = non retenus).' : 'Au départ : les équipes libres déjà enregistrées.'}</span></div>
+            <input type="search" data-field="filter" placeholder="Filtrer : archer ou club" aria-label="Filtrer" value="${esc(S.filter)}">
+            <details class="eq-how"${S.how ? ' open' : ''}><summary data-act="how">Comment faire ?</summary><ul>
+            <li>Glissez un archer dans une équipe, ou touchez-le puis touchez la case.</li>
+            <li><b>Ctrl + clic</b> (Cmd sur Mac) : plusieurs archers du même club, déplacés ensemble ; Échap : tout désélectionner.</li>
+            <li>${S.mode === 'classe' ? 'Au départ : les archers cochés « Équipe » dans Ianseo (moins de 3 dans le club : non retenus).' : 'Au départ : les équipes libres déjà enregistrées.'}</li>
+            <li>Proposition automatique : ${S.init.state.started ? 'par score' : 'par ordre d\'inscription'}${S.mode === 'libre' ? ', hommes et femmes séparés. Une équipe qui mêle hommes et femmes va dans le classement « Mixte »' : ''}.</li>
+            </ul></details></div>
             ${ro ? '<div class="eq-banner eq-red">Lecture seule (droits, verrou ou garde-fou).</div>' : ''}</div>`;
         if (!S.sections.length) h += '<div class="eq-card eq-muted">Aucun archer dans ces catégories.</div>';
         S.sections.forEach((s, si) => {
@@ -241,8 +226,8 @@
             }
             h += '</section>';
         });
-        return h + `<div class="eq-actions"><button class="ghost" data-act="to1">← Critères</button><span class="eq-grow"></span>
-            <button data-act="to3">Aperçu →</button></div>`;
+        return h + `<div class="eq-actions"><button class="ghost" data-act="to2">← Catégories</button><span class="eq-grow"></span>
+            <button data-act="to4">Vérifier →</button></div>`;
     }
 
     function applyFilter() {
@@ -279,13 +264,19 @@
 
     const teamsPayload = () => S.teams.filter((t) => t.members.length).map((t) => ({ club: t.club, members: t.members }));
 
-    // ── Étape 3 : aperçu ─────────────────────────────────────────────────────
+    // ── Étape 4 : vérifier et appliquer ──────────────────────────────────────
 
-    function step3() {
+    function step4() {
         const P = S.plan;
         if (!P) return '<p class="eq-muted">Calcul de l\'aperçu…</p>';
         const started = P.state !== 'BEFORE';
-        let h = alertsHtml(P.alerts);
+        const nTeams = P.sections.reduce((n, s) => n + s.teams.length, 0);
+        const nAlerts = P.sections.reduce((n, s) => n + s.teams.filter((t) => t.alerts.length).length, 0) + (P.alerts || []).length;
+        const kpi = (n, label) => `<div class="eq-kpi"><b>${n}</b><span class="eq-muted">${label}</span></div>`;
+        let h = '<div class="eq-kpis">' + kpi(nTeams, 'équipe(s)')
+            + (P.mode === 'classe' ? kpi(P.changes.length, 'archer(s) modifié(s) dans Ianseo') : kpi(P.replaced.length, 'équipe(s) libre(s) remplacée(s)'))
+            + kpi(nAlerts, 'alerte(s) à regarder') + '</div>';
+        h += alertsHtml(P.alerts);
         if (!P.sections.length) h += '<div class="eq-card eq-muted">Aucune équipe.</div>';
         for (const s of P.sections) {
             h += `<div class="eq-card"><h3>${esc(s.label)}${s.sub ? ` <span class="b">${esc(s.sub)}</span>` : ''}</h3>`;
@@ -305,12 +296,12 @@
             h += '</div>';
         }
         if (P.mode === 'classe') {
-            h += `<div class="eq-card"><h3>Modifications dans Ianseo : case « Équipe » de ${P.changes.length} archer(s)</h3>`;
-            if (!P.changes.length) h += '<p class="eq-muted">Aucune : les inscriptions correspondent déjà à cette composition.</p>';
+            h += `<div class="eq-card"><h3>Ce qui change dans Ianseo : case « Équipe » de ${P.changes.length} archer(s)</h3>`;
+            if (!P.changes.length) h += '<p class="eq-muted">Rien : les inscriptions correspondent déjà à cette composition.</p>';
             else {
-                h += '<table class="eq-table"><tr><th>Archer</th><th>Club</th><th>Catégorie</th><th>Équipe</th></tr>'
+                h += '<details><summary>Voir le détail</summary><table class="eq-table"><tr><th>Archer</th><th>Club</th><th>Catégorie</th><th>Équipe</th></tr>'
                     + P.changes.map((c) => `<tr><td>${esc(c.name)}</td><td>${esc(c.club)}</td><td>${esc(c.cat)}${c.why ? ` <span class="b orange">${esc(c.why)}</span>` : ''}</td>
-                        <td><span class="eq-old">${c.old ? 'oui' : 'non'}</span> → <span class="eq-new">${c.new ? 'oui' : 'non'}</span></td></tr>`).join('') + '</table>';
+                        <td><span class="eq-old">${c.old ? 'oui' : 'non'}</span> → <span class="eq-new">${c.new ? 'oui' : 'non'}</span></td></tr>`).join('') + '</table></details>';
             }
             h += '</div>';
         } else {
@@ -319,10 +310,25 @@
                 <p class="eq-muted">Rien n'est écrit dans les tables d'Ianseo : les équipes libres sont gardées par le module.</p></div>`;
         }
         const needConfirm = P.mode === 'classe' && P.state === 'STARTED';
-        return h + `<div class="eq-actions"><button class="ghost" data-act="to2">← Modifier</button><span class="eq-grow"></span>
+        h += `<div class="eq-save"><span><b>Avant d'appliquer : avez-vous sauvegardé la compétition ?</b> Le module est indépendant d'Ianseo,
+            sans garantie. Vous pourrez annuler cette application depuis le tableau de bord.</span>
+            <a class="eq-btn ghost" href="${esc(C.export)}" target="_blank">Exporter la compétition</a></div>`;
+        return h + `<div class="eq-actions"><button class="ghost" data-act="to3">← Composition</button><span class="eq-grow"></span>
             ${needConfirm ? `<label class="eq-check eq-banner eq-red" style="margin:0"><input type="checkbox" data-field="confirm" ${S.confirm ? 'checked' : ''}>
                 Je confirme : le tir a commencé</label>` : ''}
             <button data-act="apply" ${P.ok && !readOnly() && !S.busy && (!needConfirm || S.confirm) ? '' : 'disabled'}>${P.mode === 'classe' ? 'Appliquer' : 'Enregistrer les équipes'}</button></div>`;
+    }
+
+    // ── Fin : après l'application ────────────────────────────────────────────
+
+    function stepFin() {
+        return `<div class="eq-card eq-fin" role="status"><h3>${S.mode === 'classe' ? 'Équipes appliquées' : 'Équipes enregistrées'}</h3>
+            <p>${esc(S.done)}</p>
+            <div class="eq-actions"><a class="eq-btn" href="${esc(C.home)}">Retour au tableau de bord</a>
+            ${S.mode === 'classe' ? `<a class="eq-btn ghost" href="${esc(nativePrintUrl())}" target="_blank">Imprimer le classement (Ianseo)</a>`
+                : `<a class="eq-btn ghost" href="${esc(C.teamsPdf)}" target="_blank">Imprimer le classement (PDF)</a>`}
+            <button class="ghost" data-act="to1">Composer d'autres équipes</button></div>
+            <p class="eq-muted">Une erreur ? « Annuler cette application » sur le <a href="${esc(C.home)}">tableau de bord</a>.</p></div>`;
     }
 
     // ── Actions ──────────────────────────────────────────────────────────────
@@ -335,14 +341,15 @@
     }
 
     const ACTIONS = {
-        async log() { const r = await api('log'); S.log = r.log || []; render(); },
-        async undo() {
-            if (!confirm('Annuler la dernière application ?')) return;
-            const r = await api('undo', { confirm: S.confirm });
-            await reloadInit();
-            S.msg = [r.error ? 'red' : 'green', r.msg];
-            S.log = null;
+        'pick-mode'(el) {
+            S.mode = el.dataset.mode;
             S.done = null;
+            go(2);
+        },
+        how(el, ev) {
+            // « Comment faire ? » reste ouvert d'un rendu à l'autre.
+            ev.preventDefault();
+            S.how = !S.how;
             render();
         },
         'cls-sex'(el) {
@@ -360,14 +367,15 @@
             importTeams(r.teams);
             S.sel = new Set();
             S.done = null;
-            go(2);
+            go(3);
         },
         to1() { go(1); },
         to2() { go(2); },
-        async to3() {
+        to3() { go(3); },
+        async to4() {
             S.plan = null;
             S.confirm = false;
-            go(3);
+            go(4);
             const r = await api('preview', Object.assign(params(), { teams: teamsPayload() }));
             S.plan = r.error ? { ok: false, mode: S.mode, alerts: [['error', r.msg]], sections: [], changes: [], replaced: [], state: 'BEFORE' } : r.plan;
             render();
@@ -377,7 +385,7 @@
             const r = await api('propose', params());
             if (r.error) { S.msg = ['red', r.msg]; render(); return; }
             importTeams(r.teams);
-            S.msg = ['info', `Proposition : ${S.teams.length} équipe(s). Ajustez puis passez à l'aperçu.`];
+            S.msg = ['info', `Proposition : ${S.teams.length} équipe(s). Ajustez, puis « Vérifier ».`];
             render();
         },
         clear() {
@@ -426,19 +434,28 @@
                 return;
             }
             await reloadInit();
-            S.log = null;
             S.confirm = false;
-            go(1);
             S.done = r.msg;
-            render();
+            go(FIN);
         },
     };
+
+    /** Préréglage venu du tableau de bord (« Modifier ces équipes ») : mode, critères, puis composition. */
+    async function applyPreset() {
+        const p = C.preset || {};
+        if (p.mode) S.mode = p.mode;
+        const divs = new Set(S.init.divisions.map((d) => d.id));
+        const cls = new Set(S.init.classes.map((c) => c.id));
+        S.crit.divs = (p.divs || []).filter((d) => divs.has(d));
+        S.crit.classes = (p.classes || []).filter((c) => cls.has(c));
+        if (p.compose && S.crit.divs.length && S.crit.classes.length) await ACTIONS.load();
+        else go(p.mode ? 2 : 1);
+    }
 
     function onField(el) {
         const f = el.dataset.field;
         const num = (v, min, max) => Math.max(min, Math.min(max, parseInt(v, 10) || 0));
-        if (f === 'mode') { S.mode = el.value; S.done = null; render(); }
-        else if (f === 'div' || f === 'cls') {
+        if (f === 'div' || f === 'cls') {
             const key = f === 'div' ? 'divs' : 'classes';
             S.crit[key] = el.checked ? [...new Set(S.crit[key].concat(el.value))] : S.crit[key].filter((x) => x !== el.value);
             render();
@@ -488,7 +505,7 @@
             const [si, club, n] = box.dataset.drop.split('|');
             moveArchers(ev.dataTransfer.getData('text/plain').split(',').map(Number), +si, +club, n);
         });
-        document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && S.step === 2 && S.sel.size) { S.sel = new Set(); render(); } });
-        if (await reloadInit()) render();
+        document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && S.step === 3 && S.sel.size) { S.sel = new Set(); render(); } });
+        if (await reloadInit()) await applyPreset();
     });
 })();

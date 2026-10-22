@@ -34,10 +34,11 @@ la page « Mise à jour du module » la refuse (dossier `.git`).
 
 ## Premier lancement
 
-Ouvrir une compétition au **règlement FR** : le menu **Modules → Équipes** apparaît, avec **Assistant de
-composition** et **Équipes créées** (droit « Participants » en lecture au minimum ; en écriture pour appliquer).
+Ouvrir une compétition au **règlement FR** : le menu **Modules → Équipes** apparaît, avec **Tableau de bord**,
+**Composer des équipes** et **Contrôles et historique** (droit « Participants » en lecture au minimum ; en écriture
+pour appliquer).
 
-En bas de la page de l'assistant, le **garde-fou** indique s'il reconnaît la version d'IANSEO :
+Sur la page **Contrôles et historique**, le **garde-fou** indique s'il reconnaît la version d'IANSEO :
 - **vert** : version validée, tout est autorisé ;
 - **orange** : version inconnue mais le code surveillé est identique : autorisé, avec un avertissement ;
 - **rouge** : quelque chose a changé dans IANSEO : le module passe en **lecture seule** et n'écrit plus rien.

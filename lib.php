@@ -900,7 +900,7 @@ function Equipe_undo($confirm)
     return ['ok' => true, 'msg' => count($rows) . ' archer(s) remis comme avant.' . $skip];
 }
 
-// ── Suppression d'équipes (page « Équipes créées ») ──────────────────────────
+// ── Suppression d'équipes (tableau de bord) ──────────────────────────
 
 /** Même équipe libre : même club, mêmes archers (ordre indifférent). */
 function Equipe_free_same($t, $club, array $members)

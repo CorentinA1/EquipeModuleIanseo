@@ -40,11 +40,66 @@
 #eq .eq-green { background: var(--vert-fond); border-color: var(--vert); }
 #eq .eq-info { background: var(--bleu-clair); border-color: var(--plein); }
 
+/* En-tête et pied communs */
+#eq .eq-head h2 { margin: 4px 0; }
+#eq .eq-head nav { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+#eq .eq-head nav a.eq-help { border: none; text-decoration: underline; }
+#eq .eq-foot { margin-top: 18px; padding-top: 8px; border-top: 1px solid var(--bord); color: var(--gris); font-size: 12px; }
+#eq h4 { color: var(--bleu); margin: 14px 0 6px; }
+#eq .eq-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+#eq .eq-scroll { overflow-x: auto; }
+
+/* Tableau de bord */
+#eq .eq-grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 12px; margin-bottom: 12px; }
+#eq .eq-grid2 .eq-card { margin-bottom: 0; }
+#eq .eq-grid2 h3 { margin-top: 2px; }
+#eq .eq-cta { display: flex; justify-content: center; margin: 18px 0 6px; }
+#eq a.eq-btn.big { padding: 12px 30px; font-size: 15px; }
+#eq details.eq-card > summary { min-height: 28px; display: flex; align-items: center; }
+
 /* Étapes */
-#eq .eq-steps { display: flex; gap: 4px; margin: 10px 0 14px; flex-wrap: wrap; }
-#eq .eq-steps span { padding: 6px 12px; border-radius: 16px; background: var(--neutre); color: var(--gris); font-weight: 600; }
-#eq .eq-steps span.cur { background: var(--plein); color: var(--sur-plein); }
-#eq .eq-steps span.done { background: var(--bleu-clair); color: var(--bleu); }
+#eq .eq-steps { display: flex; gap: 4px; margin: 10px 0 10px; padding: 0; list-style: none; flex-wrap: wrap; }
+#eq .eq-steps li { padding: 6px 12px; border-radius: 16px; background: var(--neutre); color: var(--gris); font-weight: 600; }
+#eq .eq-steps li.cur { background: var(--plein); color: var(--sur-plein); }
+#eq .eq-steps li.done { background: var(--bleu-clair); color: var(--bleu); }
+#eq .eq-mode { margin: 0 0 12px; }
+#eq button.eq-link { background: none; border: none; padding: 0 2px; color: var(--lien); text-decoration: underline; font-weight: 400; }
+#eq .eq-lead { font-size: 15px; margin: 4px 0 12px; }
+
+/* Étape 1 : choix du mode */
+#eq .eq-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+#eq button.eq-choice { display: flex; flex-direction: column; gap: 10px; text-align: left; padding: 18px; border: 2px solid var(--bord); border-radius: 10px; background: var(--fond); color: var(--texte); font-weight: 400; line-height: 1.5; }
+#eq button.eq-choice:hover, #eq button.eq-choice.cur { border-color: var(--plein); background: var(--bleu-clair); }
+#eq .eq-choice .t { font-size: 16px; font-weight: 700; color: var(--bleu); }
+#eq .eq-choice .ex { padding: 6px 10px; border-radius: 6px; background: var(--neutre); }
+#eq .eq-choice .go { align-self: flex-start; padding: 8px 16px; border-radius: 6px; background: var(--plein); color: var(--sur-plein); font-weight: 600; }
+
+/* Étape 2 : catégories et sélection */
+#eq .eq-layout { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+#eq .eq-main { flex: 999 1 560px; min-width: 0; }
+#eq .eq-side { flex: 1 1 240px; }
+#eq .eq-main .eq-card h3, #eq .eq-side h3 { margin-top: 2px; }
+#eq .eq-grp { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; margin-bottom: 6px; }
+#eq .eq-grp > b { min-width: 72px; }
+#eq label.eq-check.on { font-weight: 600; color: var(--bleu); }
+#eq .eq-big { font-size: 26px; font-weight: 700; color: var(--bleu); }
+#eq .eq-side dl { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; margin: 8px 0 0; }
+#eq .eq-side dd { margin: 0; text-align: right; font-weight: 700; }
+
+/* Étape 3 : aide repliée */
+#eq details.eq-how { flex-basis: 100%; }
+#eq details.eq-how summary { cursor: pointer; color: var(--lien); font-weight: 600; }
+#eq details.eq-how ul { margin: 6px 0 0 18px; padding: 0; line-height: 1.6; }
+
+/* Étape 4 et fin */
+#eq .eq-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 12px; }
+#eq .eq-kpi { padding: 10px 14px; border: 1px solid var(--bord); border-radius: 8px; background: var(--fond); }
+#eq .eq-kpi b { display: block; font-size: 24px; color: var(--bleu); }
+#eq .eq-card details summary { cursor: pointer; color: var(--lien); font-weight: 600; margin-bottom: 6px; }
+#eq .eq-save { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; margin: 4px 0 8px; border: 1px solid var(--orange); border-radius: 8px; background: var(--orange-fond); }
+#eq .eq-fin { text-align: center; padding: 28px 16px; border-color: var(--vert); background: var(--vert-fond); }
+#eq .eq-fin h3 { margin-top: 0; font-size: 18px; color: var(--vert); }
+#eq .eq-fin .eq-actions { justify-content: center; }
 #eq .eq-card { background: var(--fond); border: 1px solid var(--bord); border-radius: 8px; padding: 12px 14px; margin-bottom: 12px; color: var(--texte); }
 #eq .eq-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
 #eq .eq-actions .eq-grow { flex: 1; }
@@ -81,7 +136,6 @@
 #eq .eq-tools { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 #eq .eq-cat { background: var(--fond); border: 1px solid var(--bord); border-radius: 8px; padding: 4px 12px 10px; margin-bottom: 12px; }
 #eq .eq-teams { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; align-content: start; }
-#eq .eq-steps span.mode { background: none; color: var(--gris); font-weight: 400; }
 #eq .eq-club { display: grid; grid-template-columns: 170px 2fr 1fr; gap: 10px; padding: 8px 0; border-top: 1px solid var(--bleu-clair); }
 #eq .eq-club-name b { color: var(--bleu); }
 #eq .eq-box { border: 2px dashed var(--bord); border-radius: 8px; padding: 6px; min-height: 44px; background: var(--neutre); }
@@ -101,7 +155,6 @@
 #eq .b.ok { background: var(--vert-fond); color: var(--vert); }
 #eq a.eq-btn { display: inline-block; border-radius: 6px; padding: 6px 14px; border: 1px solid var(--plein); background: var(--plein); color: var(--sur-plein); font-weight: 600; text-decoration: none; }
 #eq a.eq-btn.ghost { background: var(--fond); color: var(--lien); }
-#eq .eq-done { border-left: 5px solid var(--vert); background: var(--vert-fond); }
 #eq details.eq-card summary { cursor: pointer; font-weight: 600; color: var(--bleu); }
 #eq details.eq-card table { margin-top: 8px; }
 

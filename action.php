@@ -1,6 +1,6 @@
 <?php
 /**
- * action.php — points d'entrée JSON de l'assistant (?act=…).
+ * action.php — points d'entrée JSON de l'assistant et du tableau de bord (?act=…).
  *
  * Paramètres communs : mode (classe|libre), divs[], classes[], settings {size_min, size_max}.
  * Lecture  : init, load (archers listés et composition actuelle), propose, preview, log
@@ -48,7 +48,7 @@ switch ($act) {
         $counts = [];
         $entries = Equipe_entries();
         foreach ($entries as $e) if ($e['counted']) $counts[Equipe_cat($e)] = ($counts[Equipe_cat($e)] ?? 0) + 1;
-        $undo = Equipe_undo_info();
+        // Contrôles des inscriptions multiples et annulation : pages Contrôles et tableau de bord.
         $JSON = [
             'error' => 0,
             'guard' => $guard['level'],
@@ -57,9 +57,6 @@ switch ($act) {
             'divisions' => $divisions,
             'classes' => $classes,
             'counts' => $counts,
-            'dups' => Equipe_dup_control($entries),
-            'undo' => $undo ? ['at' => $undo['at'], 'user' => $undo['user'], 'mode' => $undo['mode'] ?? 'classe',
-                'n' => ($undo['mode'] ?? 'classe') === 'libre' ? count($undo['teams']) : count($undo['rows'])] : null,
         ];
         break;
 
@@ -113,7 +110,7 @@ switch ($act) {
         $JSON = ['error' => $r['ok'] ? 0 : 1, 'msg' => $r['msg']];
         break;
 
-    // Suppression depuis la page « Équipes créées ».
+    // Suppression depuis le tableau de bord.
     case 'delete':
         $kind = ($in['kind'] ?? '') === 'classe' ? 'classe' : 'libre';
         Equipe_require_write($kind);

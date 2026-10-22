@@ -1,5 +1,25 @@
 # Nouveautés de chaque version
 
+## 0.5.0 — version de test
+
+**Nouvelle organisation des pages.** L'assistant mêlait des impressions, des contrôles, le journal et l'annulation ;
+chaque page a maintenant un seul rôle (menu **Modules → Équipes**, onglets en haut de chaque page) :
+
+- **Tableau de bord** (remplace « Équipes créées », page d'entrée) : équipes des deux modes, résumées par catégorie
+  ou par classement, avec **Modifier ces équipes** (l'assistant s'ouvre directement sur la composition) et les
+  impressions ; détail, scores et suppression dans un cadre replié ; dernière application et **Annuler cette
+  application** ; alerte des inscriptions en défaut.
+- **Composer des équipes** : l'assistant seul, en **4 étapes** (Mode, Catégories, Composition, Vérifier et
+  appliquer), puis un écran de fin. Le mode se choisit sur deux cartes avec un exemple ; un cadre « Votre sélection »
+  compte les archers retenus ; l'aide de la composition est repliée (« Comment faire ? ») ; le rappel de sauvegarde,
+  avec le bouton d'export, est juste avant « Appliquer ».
+- **Contrôles et historique** : archers inscrits plusieurs fois, journal des applications, diagnostic du garde-fou.
+- L'avertissement « module indépendant, sans garantie » passe en pied de page de chaque page ; le lien « Mode
+  d'emploi » est dans les onglets.
+
+Les calculs, l'application, l'annulation et les données ne changent pas. L'ancienne adresse `equipes.php` renvoie
+vers le tableau de bord.
+
 ## 0.4.1 — version de test
 
 - **Mise à jour du module sous Windows.** La mise à jour depuis IANSEO s'arrêtait sur « Écriture impossible :
