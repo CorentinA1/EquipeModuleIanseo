@@ -1,5 +1,12 @@
 # Nouveautés de chaque version
 
+## 0.6.0 — version de test
+
+- **Pastille « mise à jour disponible » dans le menu** (administrateur) : un point rouge sur le titre **Modules** et sur
+  le nom du module, une pastille rouge **⬆** sur « Mise à jour du module », avec une bulle qui donne la version installée
+  et la version disponible. Vérification en arrière-plan au plus une fois par jour (une heure après un échec), sans
+  ralentir les pages ni les bloquer sans Internet ; la page de mise à jour vérifie toujours tout de suite.
+
 ## 0.5.1 — version de test
 
 - **Guide utilisateur illustré (PDF)** dans `docs/GUIDE-UTILISATEUR.pdf` : le module en bref, le tableau de bord,

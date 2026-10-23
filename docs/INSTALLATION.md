@@ -45,6 +45,12 @@ Sur la page **Contrôles et historique**, le **garde-fou** indique s'il reconna�
 
 ## Mise à jour
 
+**Pastille dans le menu** (administrateur) : quand une version plus récente est publiée, un point rouge apparaît sur
+le titre **Modules** et sur le nom du module, et une pastille rouge **⬆** sur « Mise à jour du module » ; au survol, une
+bulle donne la version installée et la version disponible. La vérification se fait en arrière-plan, sans ralentir les
+pages, au plus une fois par jour (une heure après un échec) ; ouvrir la page de mise à jour vérifie tout de suite. Sans
+Internet, pas de pastille : la dernière information connue est gardée.
+
 **Depuis IANSEO** (administrateur) : **Modules → Équipes → Mise à jour du module**, puis « Vérifier les mises à
 jour ». La page affiche les nouveautés de la version disponible et l'installe en un clic.
 
