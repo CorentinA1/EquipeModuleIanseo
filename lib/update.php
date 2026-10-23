@@ -289,6 +289,18 @@ function Equipe_upd_notify_due($dir, $now = null)
 }
 
 /**
+ * Version plus récente repérée par la dernière vérification (celle de la pastille du menu), ou null.
+ * Lit seulement l'état gardé : aucun accès à GitHub.
+ */
+function Equipe_upd_notify_pending($dir)
+{
+    $s = Equipe_upd_notify_read($dir);
+    $have = (string) (Equipe_upd_local($dir)['version'] ?? '');
+    $latest = $s ? (string) ($s['latest'] ?? '') : '';
+    return $have !== '' && preg_match('/^\d+\.\d+\.\d+$/', $latest) && version_compare($latest, $have, '>') ? $latest : null;
+}
+
+/**
  * Vérification en arrière-plan, si le délai est écoulé. Marque d'abord « en cours » :
  * plusieurs pages ouvertes en même temps ne lancent qu'une vérification.
  *

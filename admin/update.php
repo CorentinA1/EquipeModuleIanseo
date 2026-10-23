@@ -32,6 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = (string) ($_POST['action'] ?? '');
     if ($action === 'update' || $action === 'force') $result = Equipe_upd_apply($dir, $action === 'force');
     $check = Equipe_upd_check($dir);   // après une mise à jour, relit la version installée
+} elseif (Equipe_upd_notify_pending($dir) !== null) {
+    // Pastille du menu affichée : vérifie tout de suite, pour montrer les nouveautés et le bouton « Mettre à jour ».
+    $check = Equipe_upd_check($dir);
 }
 
 $cfg = Equipe_upd_config($dir);

@@ -1,5 +1,11 @@
 # Nouveautés de chaque version
 
+## 0.6.1 — version de test
+
+- **Pastille de mise à jour orange**, moins alarmante que le rouge.
+- **Bouton « Mettre à jour » affiché d'office** : quand la pastille est là, la page « Mise à jour du module » vérifie
+  d'elle-même la version disponible à l'ouverture et montre ses nouveautés et le bouton, sans cliquer sur « Vérifier ».
+
 ## 0.6.0 — version de test
 
 - **Pastille « mise à jour disponible » dans le menu** (administrateur) : un point rouge sur le titre **Modules** et sur

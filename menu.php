@@ -25,14 +25,14 @@ if (!empty($on) && ($_SESSION['TourLocRule'] ?? '') === 'FR'
         if ($eqHave !== '' && preg_match('/^\d+\.\d+\.\d+$/', $eqLatest) && version_compare($eqLatest, $eqHave, '>')) {
             $eqTip = htmlspecialchars('Mise à jour disponible : ' . $eqHave . ' → ' . $eqLatest, ENT_QUOTES, 'UTF-8');
             $eqMaj = '<span class="maj-dot" title="' . $eqTip . '" style="display:inline-block;min-width:15px;height:15px;line-height:15px;padding:0 3px;border-radius:8px;'
-                . 'background:var(--text-danger,#d6283a);color:#fff;font-size:10px;font-weight:bold;text-align:center;margin-left:6px;vertical-align:middle">⬆</span>';
+                . 'background:#f08c00;background:color-mix(in srgb,var(--text-warning,#ffc107) 60%,var(--text-danger,#dc3545));color:#fff;font-size:10px;font-weight:bold;text-align:center;margin-left:6px;vertical-align:middle">⬆</span>';
             $eqDot = '<span class="maj-dot" title="' . $eqTip . '" style="display:inline-block;width:8px;height:8px;border-radius:50%;'
-                . 'background:var(--text-danger,#d6283a);margin-left:5px;vertical-align:middle"></span>';
+                . 'background:#f08c00;background:color-mix(in srgb,var(--text-warning,#ffc107) 60%,var(--text-danger,#dc3545));margin-left:5px;vertical-align:middle"></span>';
             $ret['MODS']['EQUIPE'][0] .= $eqDot;
             // Titre « Modules » de la barre : un seul point, quel que soit le nombre de modules concernés.
             if (isset($ret['MODS'][0]) && strpos($ret['MODS'][0], 'maj-dot') === false) {
                 $ret['MODS'][0] .= '<span class="maj-dot" title="Mise à jour disponible pour un module" style="display:inline-block;width:8px;height:8px;border-radius:50%;'
-                    . 'background:var(--text-danger,#d6283a);margin-left:4px;vertical-align:super"></span>';
+                    . 'background:#f08c00;background:color-mix(in srgb,var(--text-warning,#ffc107) 60%,var(--text-danger,#dc3545));margin-left:4px;vertical-align:super"></span>';
             }
         }
         if (!is_array($eqState) || time() >= (int) ($eqState['next'] ?? 0)) {
