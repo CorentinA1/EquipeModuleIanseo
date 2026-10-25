@@ -52,6 +52,10 @@ La page d'entrée du module.
   les choses comme avant le dernier geste (application ou suppression).
 - Un bandeau signale les **inscriptions en défaut** (archers inscrits plusieurs fois avec une case équipe cochée sur
   un départ qui ne compte pas), avec un lien vers les contrôles.
+- **Fiche d'inscription des équipes** : bouton **Imprimer la fiche vierge (PDF)**, une page de 12 petits tableaux à
+  envoyer aux clubs avant la compétition. Pour chaque équipe : équipe / club et catégorie en en-tête, puis 4 archers (nom et
+  prénom, catégorie). Les clubs la remplissent à la main ; vous saisissez ensuite les équipes dans « Composer des
+  équipes ».
 - **Composer des équipes** : le grand bouton en bas ouvre l'assistant.
 
 ## Composer des équipes

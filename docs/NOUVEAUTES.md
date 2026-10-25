@@ -1,5 +1,11 @@
 # Nouveautés de chaque version
 
+## 0.6.2 — version de test
+
+- **Fiche d'inscription des équipes vierge** (tableau de bord, « Imprimer la fiche vierge (PDF) ») : une page de
+  12 petits tableaux (équipe / club et catégorie, puis 4 archers : nom et prénom, catégorie) à faire remplir à la main par les
+  clubs avant la saisie dans « Composer des équipes ».
+
 ## 0.6.1 — version de test
 
 - **Pastille de mise à jour orange**, moins alarmante que le rouge.

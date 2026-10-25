@@ -190,6 +190,12 @@ include('Common/Templates/head.php');
         </div>
     <?php endif; ?>
 
+    <div class="eq-card eq-row">
+        <span><b>Fiche d'inscription des équipes</b> <span class="eq-muted">: vierge, à faire remplir à la main par les clubs,
+            puis à saisir dans « Composer des équipes ».</span></span>
+        <a class="eq-btn ghost" href="./fiche-pdf.php" target="_blank">Imprimer la fiche vierge (PDF)</a>
+    </div>
+
     <div class="eq-cta"><a class="eq-btn big" href="./assistant.php">Composer des équipes</a></div>
 
     <?= Equipe_page_footer() ?>
