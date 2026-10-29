@@ -12,7 +12,7 @@
  * des fonctions dont l'empreinte change, puis ajouter la version ici.
  */
 return [
-    'versions' => ['2026-03-01'],
+    'versions' => ['2026-03-01', '2026-10-26'],
 
     'functions' => [
         // Calcul natif du classement par équipes division/classe : code figé.
@@ -20,6 +20,9 @@ return [
             'params' => ['Societa', 'Category', 'ToId'],
             'sha1' => [
                 '2026-03-01' => '38bea42752d4048b5674aea099ae928c5ea83fe1',
+                // 2026-10-26 : seul l'effacement avant recalcul change (deux DELETE au lieu d'un DELETE joint) ;
+                // calcul standard (ToElabTeam=0) identique. Le reste ne touche que le calcul italien (ToElabTeam≠0).
+                '2026-10-26' => '8b51c54151dcbc1376e6bb4eb9cd74bb9e03cade',
             ],
         ],
 

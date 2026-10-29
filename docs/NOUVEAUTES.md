@@ -1,5 +1,13 @@
 # Nouveautés de chaque version
 
+## 0.6.3 — version de test
+
+- **Compatible avec IANSEO 2026-10-26.** Depuis cette mise à jour d'IANSEO, le module passait en lecture seule : son
+  garde-fou voyait le code du classement par équipes d'IANSEO (`MakeTeams`) modifié. Le changement a été relu : seul
+  l'effacement des anciennes équipes avant recalcul s'écrit autrement, le calcul standard (3 meilleurs scores par club
+  et par arme et classe) est identique. Le reste ne concerne que le calcul italien, que le module n'utilise pas.
+  IANSEO 2026-03-01 reste accepté.
+
 ## 0.6.2 — version de test
 
 - **Fiche d'inscription des équipes vierge** (tableau de bord, « Imprimer la fiche vierge (PDF) ») : une page de
